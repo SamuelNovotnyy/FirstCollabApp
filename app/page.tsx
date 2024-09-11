@@ -3,79 +3,68 @@
 import { Suspense, useState } from 'react';
 import usePartySocket from 'partysocket/react';
 import ThemeController from '@/components/ThemeController';
+import CoolRandomShape from '@/components/CoolRandomShape';
+import { randomClipPathShape } from '@/lib/randomClipPathShape';
+import { getRandomColor } from '@/lib/randomHexColor';
 
 const PARTYKIT_HOST = process.env.NEXT_PUBLIC_PARTYKIT_HOST!;
 
 export default function Home() {
-  const [squares, setSquares] = useState(0);
+  const [shapes, setShapes] = useState<
+    Array<{ id: string; clipPath: string; color: string }>
+  >([]);
 
   const socket = usePartySocket({
     host: PARTYKIT_HOST,
-    room: 'mainx',
+    room: 'main',
     onMessage(event) {
       const message = JSON.parse(event.data);
-      if (typeof message === 'number') {
-        setSquares(message);
+      if (Array.isArray(message)) {
+        setShapes(message);
       }
     },
   });
 
   function handleAdd() {
-    socket.send(JSON.stringify({ type: 'add' }));
+    const newShapeData = newShape();
+    socket.send(JSON.stringify({ type: 'add', ...newShapeData }));
   }
 
   function handleSubtract() {
     socket.send(JSON.stringify({ type: 'subtract' }));
   }
 
+  function newShape(): { id: string; clipPath: string; color: string } {
+    return {
+      id: (shapes.length + 1).toString(),
+      clipPath: randomClipPathShape(),
+      color: getRandomColor(),
+    };
+  }
+
   return (
     <>
-      <div className="h-24 w-full bg-black flex justify-between items-center px-16 py-4">
-        <h1 className="font-extrabold text-white">Wellcome!!!</h1>
-        <button className="btn btn-neutral" onClick={handleAdd}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-            />
-          </svg>
-          Add a cube
-        </button>
-        <button className="btn btn-neutral" onClick={handleSubtract}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-            />
-          </svg>
-          Remove a cube
-        </button>
-        <ThemeController />
+      <div className="h-24 w-full flex justify-center items-center bg-accent">
+        <div className="container flex justify-between items-center">
+          <h1 className="font-extrabold text-base-100">Welcome!!!</h1>
+          <button className="btn btn-neutral" onClick={handleAdd}>
+            Add a shape
+          </button>
+          <button className="btn btn-neutral" onClick={handleSubtract}>
+            Remove a shape
+          </button>
+          <ThemeController />
+        </div>
       </div>
       <Suspense fallback={<div className="skeleton w-full h-96"></div>}>
-        <div className="flex flex-row flex-wrap gap-3 m-5 bg-transparent">
-          {Array.from({ length: squares }).map((_, index) => (
+        <div className="flex flex-row flex-wrap gap-3 m-5">
+          {shapes.map(shape => (
             <div
-              key={index}
-              className="flex justify-center items-center w-7 h-7 bg-red-500 text-red-700"
+              key={shape.id}
+              className="relative size-20"
             >
-              {index + 1}
+              <div className='absolute -z-20 text-primary bg-neutral-950 -m-2 p-1 leading-none'>{shape.id}</div>
+              <CoolRandomShape shape={shape} />
             </div>
           ))}
         </div>

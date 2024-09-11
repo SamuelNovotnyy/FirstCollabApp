@@ -1,29 +1,31 @@
 import type * as Party from "partykit/server";
 
 export default class Server implements Party.Server {
-  count: number = 0;
-
   constructor(readonly room: Party.Room) {}
 
+  // Initialize Shapes as an array to hold shapes data
+  Shapes: Array<{ id: string; clipPath: string; color: string }> = [];
+
   onConnect(conn: Party.Connection, ctx: Party.ConnectionContext) {
-    // Send the current count to the new connection
-    conn.send(JSON.stringify(this.count));
-    console.log(`New connection. Current square count: ${this.count}`);
+    // Send the current state of Shapes when a user connects
+    conn.send(JSON.stringify(this.Shapes));
   }
 
   onMessage(message: string, sender: Party.Connection) {
     const data = JSON.parse(message);
     
     if (data.type === 'add') {
-      this.count++;
+      // Add the new shape to the Shapes array
+      this.Shapes.push(data);
     } else if (data.type === 'subtract') {
-      this.count = Math.max(0, this.count - 1);
+      // Remove the last shape from the Shapes array, if it exists
+      if (this.Shapes.length > 0) {
+        this.Shapes.pop();
+      }
     }
 
-    console.log(`Action: ${data.type}, New square count: ${this.count}`);
-
-    // Broadcast the new count to all connections
-    this.room.broadcast(JSON.stringify(this.count));
+    // Broadcast the updated Shapes array to all connected clients
+    this.room.broadcast(JSON.stringify(this.Shapes));
   }
 }
 
