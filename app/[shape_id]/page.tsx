@@ -3,7 +3,7 @@ import CoolRandomShape from '@/components/CoolRandomShape';
 export default async function ShapePage({
   params,
 }: {
-  params: { shape_id: string };
+  params: { shape_id: number };
 }) {
   const PARTYKIT_HOST = process.env.NEXT_PUBLIC_PARTYKIT_HOST!;
 
@@ -12,7 +12,7 @@ export default async function ShapePage({
   });
 
   const shapes = await req.json();
-  const shape = shapes[params.shape_id];
+  const shape = shapes[params.shape_id - 1];
 
   return (
     <>
