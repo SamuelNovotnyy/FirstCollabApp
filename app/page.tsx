@@ -6,6 +6,7 @@ import ThemeController from '@/components/ThemeController';
 import CoolRandomShape from '@/components/CoolRandomShape';
 import { randomClipPathShape } from '@/lib/randomClipPathShape';
 import { getRandomColor } from '@/lib/randomHexColor';
+import Link from 'next/link';
 
 const PARTYKIT_HOST = process.env.NEXT_PUBLIC_PARTYKIT_HOST!;
 
@@ -57,15 +58,16 @@ export default function Home() {
         </div>
       </div>
       <Suspense fallback={<div className="skeleton w-full h-96"></div>}>
-        <div className="flex flex-row flex-wrap gap-3 m-5">
+        <div className="flex justify-center flex-row flex-wrap gap-3 m-5">
           {shapes.map(shape => (
-            <div
-              key={shape.id}
-              className="relative size-20"
-            >
-              <div className='absolute -z-20 text-primary bg-neutral-950 -m-2 p-1 leading-none'>{shape.id}</div>
-              <CoolRandomShape shape={shape} />
-            </div>
+            <Link key={shape.id} href={`/${shape.id}`}>
+              <div className="relative size-32 hover:bg-neutral">
+                <div className="absolute -z-20 text-primary bg-neutral-950 -m-2 p-1 leading-none">
+                  {shape.id}
+                </div>
+                <CoolRandomShape shape={shape} />
+              </div>
+            </Link>
           ))}
         </div>
       </Suspense>

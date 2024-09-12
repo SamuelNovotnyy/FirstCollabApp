@@ -12,8 +12,7 @@ const CoolRandomShape: React.FC<ShapeProps> = ({ shape }) => {
     position: 'absolute',
     top: 0,
     left: 0,
-    width: '100%',
-    height: '100%',
+    inset: 10,
     clipPath: shape.clipPath,
     backgroundColor: shape.color,
   };

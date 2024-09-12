@@ -27,6 +27,18 @@ export default class Server implements Party.Server {
     // Broadcast the updated Shapes array to all connected clients
     this.room.broadcast(JSON.stringify(this.Shapes));
   }
+
+  async onRequest(req: Party.Request) {
+    if (req.method === "POST") {
+      const shape = (await req.json())
+      console.log(shape)
+    }
+    if (this.Shapes) {
+      return new Response(JSON.stringify(this.Shapes))
+    }
+
+    return new Response("Not Foundaaaaaaaaaaaaaaaaaaa", {status: 404})
+  }
 }
 
 Server satisfies Party.Worker;
