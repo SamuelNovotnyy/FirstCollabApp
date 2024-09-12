@@ -25,7 +25,7 @@ export default function Home() {
       if (req.ok) {
         const initialShapes: Shape[] = await req.json();
         console.log("GET: ", initialShapes);
-        setShapes(initialShapes);
+        setShapes(initialShapes === null ? [] : initialShapes);
       }
     }
 
@@ -38,7 +38,6 @@ export default function Home() {
     onMessage(event) {
       const message = JSON.parse(event.data) as Shape[];
       if (message) setShapes(message);
-      else setShapes([]);
     },
   });
 

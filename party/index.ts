@@ -21,7 +21,7 @@ export default class Server implements Party.Server {
 
     if (req.method === 'OPTIONS') {
       // Preflight request for CORS
-      return new Response(undefined, {
+      return new Response(null, {
         headers: corsHeaders,
       });
     }
