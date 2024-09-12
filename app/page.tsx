@@ -38,22 +38,20 @@ export default function Home() {
     onMessage(event) {
       const message = JSON.parse(event.data) as Shape[];
       if (message) setShapes(message);
+      else setShapes([]);
     },
   });
 
   async function handleAdd() {
     const newShapeData = newShape();
-
-    // socket message to add a shape
     socket.send(JSON.stringify({ type: 'add', data: newShapeData }));
   }
 
   async function handleSubtract() {
-    // socket message to remove a shape
     socket.send(JSON.stringify({ type: 'pop' }));
   }
 
-  function newShape(): { id: string; clipPath: string; color: string } {
+  function newShape(): Shape {
     return {
       id: (shapes.length + 1).toString(),
       clipPath: randomClipPathShape(),
