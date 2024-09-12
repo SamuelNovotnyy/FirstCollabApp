@@ -1,3 +1,5 @@
+'use client'
+
 import React, { Suspense, useEffect, useState } from 'react';
 import { daisyuiThemes } from '../tailwind.config';
 import useCookie from '@/hooks/useCookie';
