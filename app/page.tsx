@@ -11,6 +11,7 @@ import Link from 'next/link';
 
 const PARTYKIT_HOST = process.env.NEXT_PUBLIC_PARTYKIT_HOST!;
 //const PARTYKIT_HOST = '127.0.0.1:1999';
+const protocol = PARTYKIT_HOST.startsWith('127') ? 'http' : 'https';
 
 export default function Home() {
   const [shapes, setShapes] = useState<Shape[]>([]);
@@ -18,14 +19,14 @@ export default function Home() {
   // Fetch initial shapes on mount
   useEffect(() => {
     async function fetchShapes() {
-      const req = await fetch(`https://${PARTYKIT_HOST}/party/main`, {
+      const req = await fetch(`${protocol}://${PARTYKIT_HOST}/party/main`, {
         method: 'GET',
       });
 
       if (req.ok) {
         const initialShapes: Shape[] = await req.json();
-        console.log("GET: ", initialShapes);
-        setShapes(initialShapes === null ? [] : initialShapes);
+        console.log('GET: ', initialShapes);
+        setShapes(initialShapes);
       }
     }
 
